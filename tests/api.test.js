@@ -11,14 +11,15 @@ describe('Testes Básicos da API de Clima', () => {
     });
 
     test('1. Nome de cidade válido retorna dados meteorológicos.', async () => {
-        // Mock API de geolocalização e API de clima
         global.fetch
             .mockResolvedValueOnce({
+                ok: true,
                 json: async () => ({
                     results: [{ latitude: -23.55, longitude: -46.63, name: 'São Paulo', country: 'Brazil' }]
                 })
             })
             .mockResolvedValueOnce({
+                ok: true,
                 json: async () => ({
                     current: {
                         is_day: 1,
@@ -48,8 +49,8 @@ describe('Testes Básicos da API de Clima', () => {
     });
 
     test('2. Nome de cidade inexistente lança exceção tratada.', async () => {
-        // Mock API de geolocalização retornando vazio
         global.fetch.mockResolvedValueOnce({
+            ok: true,
             json: async () => ({
                 results: []
             })
@@ -60,21 +61,13 @@ describe('Testes Básicos da API de Clima', () => {
     });
 
     test('3. Entrada vazia retorna erro de validação.', async () => {
-        global.fetch.mockResolvedValueOnce({
-            json: async () => ({
-                error: true,
-                reason: "name must be set"
-            })
-        });
-
-        await expect(fetchSkyData('')).rejects.toThrow('NOT_FOUND');
+        await expect(fetchSkyData('')).rejects.toThrow('INVALID_INPUT');
     });
 
-    test('4. Falha da API gera resposta adequada (timeout ou erro).', async () => {
-        // Simulando um erro de rede no fetch inicial
-        global.fetch.mockRejectedValueOnce(new Error('Network response was not ok'));
+    test('4. Falha da API gera resposta adequada (erro de rede genérico).', async () => {
+        global.fetch.mockRejectedValueOnce(new Error('Network Error'));
 
-        await expect(fetchSkyData('Curitiba')).rejects.toThrow('Network response was not ok');
+        await expect(fetchSkyData('Curitiba')).rejects.toThrow('Network Error');
     });
 });
 
@@ -83,43 +76,38 @@ describe('Casos Extremos da API de Clima', () => {
         jest.clearAllMocks();
     });
 
-    test('Limite de requisições da API excedido.', async () => {
-        // Simulação de retorno da geocoding API com limite de requisições
+    test('Limite de requisições da API excedido (erro HTTP 429).', async () => {
         global.fetch.mockResolvedValueOnce({
-            json: async () => ({
-                error: true,
-                reason: "Daily API call limit exceeded."
-            })
+            ok: false,
+            status: 429
         });
 
-        await expect(fetchSkyData('Paris')).rejects.toThrow('NOT_FOUND');
+        await expect(fetchSkyData('Paris')).rejects.toThrow('GEO_API_ERROR: HTTP error 429');
     });
 
-    test('Conexão de rede lenta/instável.', async () => {
-        // Simular lentidão rejeitando após um pequeno delay
+    test('Conexão de rede lenta/instável gerando timeout.', async () => {
         global.fetch.mockImplementationOnce(() => 
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout da requisição')), 100))
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout da requisição')), 50))
         );
 
         await expect(fetchSkyData('Londres')).rejects.toThrow('Timeout da requisição');
     });
 
-    test('Mudança inesperada no formato da resposta JSON.', async () => {
-        // Simulação em que a API retorna JSON inválido (o campo "current" está faltando)
+    test('Mudança inesperada no formato da resposta JSON (lança TypeError no formatter).', async () => {
         global.fetch
             .mockResolvedValueOnce({
+                ok: true,
                 json: async () => ({
                     results: [{ latitude: 1, longitude: 1, name: 'Roma', country: 'Italy' }]
                 })
             })
             .mockResolvedValueOnce({
+                ok: true,
                 json: async () => ({
-                    // Falta "current" para causar  erro no "formatWeatherData"
-                    daily_data: {}
+                    daily_data: {} // Simulando ausência do objeto 'current' esperado
                 })
             });
 
-        // Espera-se que a função dispare um erro manipulando dados formatados incorretamente (TypeError)
         await expect(fetchSkyData('Roma')).rejects.toThrow(TypeError);
     });
 });
