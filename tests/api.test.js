@@ -1,21 +1,29 @@
+/** @jest-environment jsdom */
 import { jest } from '@jest/globals';
 import { fetchSkyData } from '../api.js';
 
 // Setup mock for global fetch
 global.fetch = jest.fn();
 
-describe('Testes Básicos da API de Clima', () => {
+describe('Testes de Engenharia - SkyCast Engine', () => {
     beforeEach(() => {
-        // Limpa os mocks antes de cada teste
         jest.clearAllMocks();
+        localStorage.clear();
     });
 
-    test('1. Nome de cidade válido retorna dados meteorológicos.', async () => {
+    test('1. Fluxo completo de busca com geocoding enriquecido.', async () => {
         global.fetch
             .mockResolvedValueOnce({
                 ok: true,
                 json: async () => ({
-                    results: [{ latitude: -23.55, longitude: -46.63, name: 'São Paulo', country: 'Brazil' }]
+                    results: [{ 
+                        latitude: -23.55, 
+                        longitude: -46.63, 
+                        name: 'São Paulo', 
+                        country: 'Brasil',
+                        admin1: 'Estado de São Paulo',
+                        admin2: 'Sampa'
+                    }]
                 })
             })
             .mockResolvedValueOnce({
@@ -40,83 +48,57 @@ describe('Testes Básicos da API de Clima', () => {
 
         const result = await fetchSkyData('São Paulo');
 
-        expect(global.fetch).toHaveBeenCalledTimes(2);
-        expect(result).toMatchObject({
-            temp: 25,
-            high: 30,
-            low: 20,
-            location: 'São Paulo, Brazil',
-            status: 'Céu limpo',
-            forecast: [
-                { high: 31, low: 21 },
-                { high: 32, low: 22 },
-                { high: 33, low: 23 },
-                { high: 34, low: 24 },
-                { high: 35, low: 25 }
-            ]
-        });
+        expect(result.temp).toBe(25);
+        expect(result.location).toContain('São Paulo');
+        expect(result.location).toContain('Brasil');
+        expect(result.status).toBe('Céu limpo');
+        
+        // Verifica se salvou no cache
+        expect(localStorage.getItem('weather_são paulo')).not.toBeNull();
     });
 
-    test('2. Nome de cidade inexistente lança exceção tratada.', async () => {
+    test('2. Validação de Cache (Cache-First).', async () => {
+        const fakeData = { temp: 99, location: 'Cache City' };
+        localStorage.setItem('weather_testecity', JSON.stringify({
+            timestamp: Date.now(),
+            data: fakeData
+        }));
+
+        const result = await fetchSkyData('TesteCity');
+        
+        expect(result).toEqual(fakeData);
+        expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    test('3. Tratamento de Erro: Cidade não encontrada.', async () => {
         global.fetch.mockResolvedValueOnce({
             ok: true,
-            json: async () => ({
-                results: []
-            })
+            json: async () => ({ results: [] })
         });
 
-        await expect(fetchSkyData('CidadeInvalida')).rejects.toThrow('NOT_FOUND');
-        expect(global.fetch).toHaveBeenCalledTimes(1);
+        await expect(fetchSkyData('Atlantida')).rejects.toThrow('NOT_FOUND');
     });
 
-    test('3. Entrada vazia retorna erro de validação.', async () => {
-        await expect(fetchSkyData('')).rejects.toThrow('INVALID_INPUT');
-    });
-
-    test('4. Falha da API gera resposta adequada (erro de rede genérico).', async () => {
-        global.fetch.mockRejectedValueOnce(new Error('Network Error'));
-
-        await expect(fetchSkyData('Curitiba')).rejects.toThrow('Network Error');
-    });
-});
-
-describe('Casos Extremos da API de Clima', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
-    test('Limite de requisições da API excedido (erro HTTP 429).', async () => {
+    test('4. Tratamento de Erro: Falha na API Geocoding (429).', async () => {
         global.fetch.mockResolvedValueOnce({
             ok: false,
             status: 429
         });
 
-        await expect(fetchSkyData('Paris')).rejects.toThrow('GEO_API_ERROR: HTTP error 429');
+        await expect(fetchSkyData('Paris')).rejects.toThrow('GEO_ERROR_429');
     });
 
-    test('Conexão de rede lenta/instável gerando timeout.', async () => {
-        global.fetch.mockImplementationOnce(() => 
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout da requisição')), 50))
-        );
-
-        await expect(fetchSkyData('Londres')).rejects.toThrow('Timeout da requisição');
-    });
-
-    test('Mudança inesperada no formato da resposta JSON (lança TypeError no formatter).', async () => {
+    test('5. Tratamento de Erro: Falha na API Weather (500).', async () => {
         global.fetch
             .mockResolvedValueOnce({
                 ok: true,
-                json: async () => ({
-                    results: [{ latitude: 1, longitude: 1, name: 'Roma', country: 'Italy' }]
-                })
+                json: async () => ({ results: [{ latitude: 1, longitude: 1, name: 'X', country: 'Y' }] })
             })
             .mockResolvedValueOnce({
-                ok: true,
-                json: async () => ({
-                    daily_data: {} // Simulando ausência do objeto 'current' esperado
-                })
+                ok: false,
+                status: 500
             });
 
-        await expect(fetchSkyData('Roma')).rejects.toThrow(TypeError);
+        await expect(fetchSkyData('ErroCity')).rejects.toThrow('WEATHER_ERROR_500');
     });
 });

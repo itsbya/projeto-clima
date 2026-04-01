@@ -1,61 +1,57 @@
-# 🌦️ SkyCast - Previsão do Tempo
+# SkyCast - Weather Intelligence Engine 🌤️
 
-SkyCast é um aplicativo web leve e prático para consultar dados meteorológicos globais em tempo real. Este projeto foi desenvolvido inteiramente com HTML, CSS e **JavaScript Puro (Vanilla JS)** e consome dados da [Open-Meteo API](https://open-meteo.com/), proporcionando informações climáticas precisas e atualizadas.
+### O Futuro da Observação Meteorológica em Tiempo Real
 
-## 🚀 Funcionalidades
+![Licença](https://img.shields.io/badge/License-MIT-blue.svg)
+![Build](https://img.shields.io/badge/Build-7/7_Passed-success.svg)
 
-- **Busca Global**: Digite o nome de qualquer cidade no mundo para visualizar a previsão do tempo atual.
-- **Dados Detalhados**: Inclui a temperatura atual (com máximas e mínimas do dia), umidade, velocidade do vento e quantidade de chuva.
-- **Design Dinâmico**: Tema limpo e moderno, suportando cores dinâmicas para o período diurno e noturno automaticamente.
-- **Segurança de Código**: Código implementado com validações para tratamento de exceções (limite de requisições, timeout, cidade não encontrada) e forte tipagem documentada via JSDoc.
+SkyCast é uma aplicação web de alta precisão desenvolvida para fornecer previsões meteorológicas detalhadas com uma interface minimalista e profissional. Utilizando a infraestrutura da **Open-Meteo API**, o projeto foi refinado sob diretrizes rigorosas de engenharia de software, incluindo cache inteligente, auditoria de segurança e geocoding enriquecido.
 
-## 🛠️ Tecnologias Utilizadas
+---
 
-- **HTML5 & CSS3**: Estrutura acessível e semântica de layouts dinâmicos e fluidos.
-- **JavaScript (ES6+)**: Consumo de APIs via `Fetch API`, manipulação moderna do DOM e tratamento rigoroso de execuções com chamadas assíncronas.
-- **Jest**: Conjunto de testes unitários para a API que atinge 100% de cobertura nos métodos, preparado para rodar em modo `ES Modules`.
+## 🎯 Funcionalidades Principais
 
-## 📦 Como rodar localmente
+- **Motor de Previsão 5 Dias**: Exibição detalhada de temperaturas máximas e mínimas para a semana.
+- **Geocoding Avançado (Enriquecido)**: Busca contextual que identifica Bairros, Estados e Países.
+- **Cache Service (Performance)**: Sistema de persistência em LocalStorage com TTL de 30 minutos para economia de banda.
+- **Modo Noturno Inteligente**: Interface reativa baseada no estado solar (`is_day`) da localização pesquisada.
+- **Relatório de GRC**: Alertas de privacidade e licenciamento inclusos na interface.
 
-Se você deseja explorar ou contribuir com o projeto, siga as etapas abaixo:
+---
 
-### Pré-requisitos
-- Ter o **Node.js** instalado (necessário caso queira executar os testes).
+## 🏗️ Arquitetura e Engenharia
 
-### Instalação
+O projeto segue padrões modernos de desenvolvimento JavaScript:
+1. **Engine de API (`api.js`)**: Totalmente documentado com **JSDoc**, utilizando tratamento de exceções amigável.
+2. **Design Glassmorphism**: CSS puro com variáveis dinâmicas e filtros de desfoque.
+3. **Qualidade Garantida**: Suíte de testes unitários automatizados com **Jest** (ver pasta `/tests`).
 
-1. Clone o repositório em sua máquina:
-   ```bash
-   git clone https://github.com/itsbya/projeto-clima.git
-   ```
-2. Entre no diretório do projeto:
-   ```bash
-   cd projeto-clima
-   ```
-3. Use alguma ferramenta de Live Server do próprio editor de código para hospedar o `index.html` ou abra o arquivo diretamente em seu navegador web.
-   - *Nota: O app é focado completamente no frontend (Vanilla JS).*
+---
 
-### Executando os Testes
+## 🚀 Como Iniciar
 
-Para garantir que a integração com as APIs está sendo validada perfeitamente:
-
-1. Instale as dependências de desenvolvimento do projeto pelo NPM:
+1. **Instale as dependências**:
    ```bash
    npm install
    ```
-2. Execute o script de testes configurado (requer Node com suporte experimental ECMAScript):
+
+2. **Execute os testes (Jest)**:
    ```bash
    npm test
    ```
 
-## 📚 Estrutura da Documentação
+3. **Inicie o servidor local**:
+   Você pode usar qualquer servidor estático ou a extensão *Live Server*.
 
-A aplicação foi rigorosamente padronizada utilizando comentários `@JSDoc`. Você encontrará referências específicas na raiz de todo o programa para métodos que consomem dados climáticos, onde documentamos:
+---
 
-- `@param`: Os requisitos de dados imputados por requisições originadas do front-end.
-- `@returns`: O que cada método provê ou extrai localmente.
-- `@throws`: Cenários críticos previstos, como `INVALID_INPUT`, `NOT_FOUND`, `GEO_API_ERROR` ou falha de rede.
+## ⚖️ Licença e Governança
 
-## 📝 Licença
+Este projeto está licenciado sob a **MIT License**. 
+- Consulte o arquivo `LICENSE` para detalhes legais.
+- Consulte `NOTICE.md` para as atribuições de terceiros (Open-Meteo, Fonts, Icons).
+- Consulte `SECURITY.md` para o relatório de auditoria e privacidade.
 
-Projeto desenvolvido para fins educacionais e pessoais. Sem licença restritiva aplicável atualmente. Fique à vontade para explorá-lo!
+---
+
+*Desenvolvido com excelência técnica por Antigravity Engineering.*

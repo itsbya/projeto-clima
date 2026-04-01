@@ -179,10 +179,25 @@ body {
 
 .btn-action-round:hover { background: #fff; transform: scale(1.1); }
 
-/* Footer */
-.app-footer { margin-top: 30px; font-size: 11px; opacity: 0.5; color: #1e293b; line-height: 1.6; }
+/* Footer e Governança */
+.app-footer { margin-top: 30px; font-size: 11px; color: #1e293b; line-height: 1.6; text-align: left; }
 .night-mode .app-footer { color: #f8fafc; }
-.app-footer a { color: inherit; font-weight: 700; text-decoration: none; }
+.app-footer a { color: var(--brand-hover); font-weight: 700; text-decoration: none; }
+
+.footer-alert { 
+    background: rgba(255, 255, 255, 0.3); 
+    border: 1px solid var(--glass-border); 
+    border-radius: 12px; 
+    padding: 12px; 
+    margin-bottom: 8px; 
+    font-size: 10px; 
+    opacity: 0.9; 
+    transition: 0.3s;
+}
+.footer-alert:hover { opacity: 1; background: rgba(255, 255, 255, 0.5); }
+.night-mode .footer-alert { background: rgba(30, 41, 59, 0.5); }
+
+.footer-alert strong { display: block; margin-bottom: 4px; font-size: 11px; opacity: 1; }
 
 /* Erros */
 .ui-alert { color: var(--ui-error); font-size: 14px; margin-top: 15px; font-weight: 700; }
