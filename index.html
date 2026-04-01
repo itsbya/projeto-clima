@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -10,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body id="view-root">
     <div class="layout-wrapper">
@@ -20,7 +21,7 @@
             <form id="form-city-query" class="query-form">
                 <div class="query-form__group">
                     <input type="text" id="input-city-name" class="query-form__input" placeholder="Ex: Rio de Janeiro" required>
-                    <button type="submit" id="btn-execute-search" class="query-form__btn">Buscar</button>
+                    <button type="submit" id="btn-execute-search" class="query-form__btn">BUSCAR</button>
                 </div>
                 <div id="feedback-error" class="ui-alert ui-alert--hidden">
                     Cidade não encontrada. Tente novamente.
@@ -82,10 +83,10 @@
         </main>
 
         <footer class="app-footer">
-             <p>🔒 Esta aplicação não coleta, armazena ou compartilha dados pessoais. As buscas são processadas em tempo real e não são registradas.</p>
-            <p>📊 Dados meteorológicos fornecidos por <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a> sob licença <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></p>
+            <p>🔒 Aplicação Privada. Sem coleta de dados pessoais.</p>
+            <p>📊 Dados: <a href="https://open-meteo.com/" target="_blank">Open-Meteo.com</a></p>
         </footer>
     </div>
-    <script src="api.js"></script>
+    <script type="module" src="api.js"></script>
 </body>
 </html>
