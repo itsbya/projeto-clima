@@ -51,7 +51,7 @@ export async function fetchSkyData(cityName) {
 
         const { latitude, longitude, name, country } = geoResult.results[0];
 
-        const weatherUri = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,is_day,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+        const weatherUri = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,is_day,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,time&timezone=auto`;
         const weatherFetch = await fetch(weatherUri);
 
         if (!weatherFetch.ok) {
@@ -80,6 +80,25 @@ function formatWeatherData(raw, city, country) {
     const isDay = current.is_day === 1;
     const info = WEATHER_DICTIONARY[current.weather_code] || { desc: 'Instável', iconDay: 'wi-day-cloudy', iconNight: 'wi-night-alt-cloudy' };
 
+    const forecast = [];
+    if (raw.daily && raw.daily.time) {
+        for (let i = 1; i <= 5; i++) {
+            if (raw.daily.time[i]) {
+                const code = raw.daily.weather_code[i];
+                const dayInfo = WEATHER_DICTIONARY[code] || { desc: 'Instável', iconDay: 'wi-day-cloudy', iconNight: 'wi-night-alt-cloudy' };
+                const dateObj = new Date(raw.daily.time[i] + 'T00:00:00');
+                const dayName = new Intl.DateTimeFormat('pt-BR', { weekday: 'short' }).format(dateObj).toUpperCase().replace('.', '');
+                
+                forecast.push({
+                    day: dayName,
+                    high: Math.round(raw.daily.temperature_2m_max[i]),
+                    low: Math.round(raw.daily.temperature_2m_min[i]),
+                    icon: `wi ${dayInfo.iconDay}`
+                });
+            }
+        }
+    }
+
     return {
         temp: Math.round(current.temperature_2m),
         high: Math.round(raw.daily.temperature_2m_max[0]),
@@ -91,7 +110,8 @@ function formatWeatherData(raw, city, country) {
         status: info.desc,
         icon: `wi ${isDay ? info.iconDay : info.iconNight}`,
         nightMode: !isDay,
-        date: new Intl.DateTimeFormat('pt-BR', { dateStyle: 'full' }).format(new Date())
+        date: new Intl.DateTimeFormat('pt-BR', { dateStyle: 'full' }).format(new Date()),
+        forecast
     };
 }
 
@@ -154,6 +174,24 @@ function updateUI(data) {
     document.getElementById('val-wind').textContent = `${data.wind} km/h`;
     document.getElementById('val-precip').textContent = `${data.rain} mm`;
     
+    const forecastContainer = document.getElementById('forecast-container');
+    if (forecastContainer) {
+        forecastContainer.innerHTML = '';
+        data.forecast.forEach(item => {
+            const el = document.createElement('div');
+            el.className = 'forecast-item';
+            el.innerHTML = `
+                <span class="forecast-item__day">${item.day}</span>
+                <i class="${item.icon}"></i>
+                <div class="forecast-item__temps">
+                    <span class="high">${item.high}º</span>
+                    <span class="low">${item.low}º</span>
+                </div>
+            `;
+            forecastContainer.appendChild(el);
+        });
+    }
+
     const body = document.getElementById('view-root');
     data.nightMode ? body.classList.add('night-mode') : body.classList.remove('night-mode');
 

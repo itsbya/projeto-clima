@@ -30,8 +30,10 @@ describe('Testes Básicos da API de Clima', () => {
                         wind_speed_10m: 10
                     },
                     daily: {
-                        temperature_2m_max: [30],
-                        temperature_2m_min: [20]
+                        time: ['2026-04-01', '2026-04-02', '2026-04-03', '2026-04-04', '2026-04-05', '2026-04-06'],
+                        weather_code: [0, 0, 1, 3, 61, 95],
+                        temperature_2m_max: [30, 31, 32, 33, 34, 35],
+                        temperature_2m_min: [20, 21, 22, 23, 24, 25]
                     }
                 })
             });
@@ -44,7 +46,14 @@ describe('Testes Básicos da API de Clima', () => {
             high: 30,
             low: 20,
             location: 'São Paulo, Brazil',
-            status: 'Céu limpo'
+            status: 'Céu limpo',
+            forecast: [
+                { high: 31, low: 21 },
+                { high: 32, low: 22 },
+                { high: 33, low: 23 },
+                { high: 34, low: 24 },
+                { high: 35, low: 25 }
+            ]
         });
     });
 

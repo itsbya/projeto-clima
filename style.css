@@ -131,6 +131,39 @@ body {
 .stats-grid__value { font-size: 15px; font-weight: 800; color: #1e293b; }
 .night-mode .stats-grid__value { color: #f8fafc; }
 
+/* Previsão 5 Dias */
+.forecast-section { margin-bottom: 30px; }
+.forecast-section__title { font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #1e293b; opacity: 0.6; margin-bottom: 12px; }
+.night-mode .forecast-section__title { color: #f8fafc; }
+
+.forecast-grid { 
+    display: grid; 
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 8px; 
+}
+.forecast-item {
+    background: rgba(255, 255, 255, 0.4); 
+    border-radius: 16px; 
+    padding: 12px 6px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 10px;
+    border: 1px solid var(--glass-border);
+}
+
+.forecast-item__day { font-size: 11px; font-weight: 800; opacity: 0.8; color: #1e293b; }
+.night-mode .forecast-item__day { color: #f8fafc; }
+
+.forecast-item i { font-size: 20px; color: var(--brand-primary); }
+
+.forecast-item__temps { display: flex; flex-direction: column; gap: 2px; }
+.forecast-item__temps .high { font-size: 13px; font-weight: 800; color: #1e293b; }
+.forecast-item__temps .low { font-size: 11px; opacity: 0.6; font-weight: 700; color: #1e293b; }
+
+.night-mode .forecast-item__temps .high,
+.night-mode .forecast-item__temps .low { color: #f8fafc; }
+
 /* Botão Voltar */
 .btn-action-round {
     width: 60px; height: 60px; border-radius: 50%; 
