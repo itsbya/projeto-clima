@@ -51,7 +51,7 @@ export async function fetchSkyData(cityName) {
 
         const { latitude, longitude, name, country } = geoResult.results[0];
 
-        const weatherUri = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,is_day,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,time&timezone=auto`;
+        const weatherUri = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,is_day,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto`;
         const weatherFetch = await fetch(weatherUri);
 
         if (!weatherFetch.ok) {
