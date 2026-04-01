@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Consulta meteorológica precisa utilizando Open-Meteo API.">
+    <title>SkyCast - Previsão do Tempo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body id="view-root">
+    <div class="layout-wrapper">
+        
+        <main class="app-card" id="view-search">
+            <h1 class="app-card__title">SkyCast</h1>
+            <form id="form-city-query" class="query-form">
+                <div class="query-form__group">
+                    <input type="text" id="input-city-name" class="query-form__input" placeholder="Ex: Rio de Janeiro" required>
+                    <button type="submit" id="btn-execute-search" class="query-form__btn">Buscar</button>
+                </div>
+                <div id="feedback-error" class="ui-alert ui-alert--hidden">
+                    Cidade não encontrada. Tente novamente.
+                </div>
+            </form>
+        </main>
+
+        <main class="app-card app-card--hidden" id="view-results">
+            <header class="weather-header">
+                <div class="weather-header__main">
+                    <i id="icon-weather-state" class="wi wi-na"></i>
+                    <div class="weather-header__temp">
+                        <span id="label-temp-now">--</span>º
+                    </div>
+                </div>
+            </header>
+            
+            <section class="location-info">
+                <h2 class="location-info__city" id="label-city-full">--</h2>
+                <p class="location-info__desc" id="label-weather-desc">--</p>
+                <time class="location-info__date" id="label-current-date">--</time>
+            </section>
+
+            <div class="temp-extremes">
+                <div class="extreme-item">
+                    <span class="extreme-item__label">MÁXIMA</span>
+                    <span id="val-temp-max" class="extreme-item__value">--º</span>
+                </div>
+                <div class="extreme-item">
+                    <span class="extreme-item__label">MÍNIMA</span>
+                    <span id="val-temp-min" class="extreme-item__value">--º</span>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stats-grid__box">
+                    <i class="wi wi-humidity"></i>
+                    <span class="stats-grid__label">UMIDADE</span>
+                    <span id="val-humidity" class="stats-grid__value">--%</span>
+                </div>
+                <div class="stats-grid__box">
+                    <i class="wi wi-strong-wind"></i>
+                    <span class="stats-grid__label">VENTO</span>
+                    <span id="val-wind" class="stats-grid__value">-- km/h</span>
+                </div>
+                <div class="stats-grid__box">
+                    <i class="wi wi-raindrops"></i>
+                    <span class="stats-grid__label">CHUVA</span>
+                    <span id="val-precip" class="stats-grid__value">-- mm</span>
+                </div>
+            </div>
+
+            <button id="btn-return-home" class="btn-action-round" aria-label="Nova busca">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+            </button>
+        </main>
+
+        <footer class="app-footer">
+             <p>🔒 Esta aplicação não coleta, armazena ou compartilha dados pessoais. As buscas são processadas em tempo real e não são registradas.</p>
+            <p>📊 Dados meteorológicos fornecidos por <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a> sob licença <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></p>
+        </footer>
+    </div>
+    <script src="api.js"></script>
+</body>
+</html>
