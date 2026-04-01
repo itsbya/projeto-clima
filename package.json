@@ -4,12 +4,12 @@
   "description": "",
   "main": "api.js",
   "scripts": {
-    "test": "jest"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "jest": "^30.3.0",
@@ -226,5 +226,13 @@
     "yargs": "^17.7.2",
     "yargs-parser": "^21.1.1",
     "yocto-queue": "^0.1.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsbya/projeto-clima.git"
+  },
+  "bugs": {
+    "url": "https://github.com/itsbya/projeto-clima/issues"
+  },
+  "homepage": "https://github.com/itsbya/projeto-clima#readme"
 }
