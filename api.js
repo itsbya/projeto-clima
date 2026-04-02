@@ -153,11 +153,80 @@ function formatWeatherData(raw, locationString) {
     };
 }
 
+/**
+ * Atualiza o horário local (Brasília) em tempo real na interface.
+ */
+function refreshClock() {
+    const timeLabel = document.getElementById('label-current-time');
+    if (!timeLabel) return;
+    
+    // Formata o horário conforme padrão de Brasília (Local do PC)
+    const now = new Date();
+    const timeString = new Intl.DateTimeFormat('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    }).format(now);
+    
+    timeLabel.textContent = `Horário Local: ${timeString}`;
+
+    // Atualiza o tema automaticamente com base no horário (se não houver trava manual)
+    const viewRoot = document.getElementById('view-root');
+    const themeIcon = document.getElementById('icon-theme');
+    if (viewRoot && !localStorage.getItem('skycast_theme')) {
+        const hour = now.getHours();
+        const isNightTime = hour < 6 || hour > 18;
+        
+        if (isNightTime) {
+            viewRoot.classList.add('night-mode');
+            if (themeIcon) themeIcon.className = 'wi wi-night-clear';
+        } else {
+            viewRoot.classList.remove('night-mode');
+            if (themeIcon) themeIcon.className = 'wi wi-day-sunny';
+        }
+    }
+}
+
 /** 
  * Inicialização semântica da aplicação.
  */
 if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', initApp);
+    document.addEventListener('DOMContentLoaded', () => {
+        initTheme();
+        initApp();
+        // Inicia o relógio e atualiza a cada segundo
+        refreshClock();
+        setInterval(refreshClock, 1000);
+    });
+}
+
+/**
+ * Gerencia o estado visual do tema (Light/Dark).
+ * Prioriza a escolha manual do usuário salva no LocalStorage.
+ */
+function initTheme() {
+    const btn = document.getElementById('btn-theme-toggle');
+    const icon = document.getElementById('icon-theme');
+    const root = document.getElementById('view-root');
+    
+    // Recupera preferência salva ou usa o padrão do sistema/horário
+    const savedTheme = localStorage.getItem('skycast_theme');
+    const hour = new Date().getHours();
+    const isNightTime = hour < 6 || hour > 18;
+
+    if (savedTheme === 'night' || (!savedTheme && isNightTime)) {
+        root.classList.add('night-mode');
+        if (icon) icon.className = 'wi wi-night-clear';
+    }
+
+    btn?.addEventListener('click', () => {
+        const isNight = root.classList.toggle('night-mode');
+        localStorage.setItem('skycast_theme', isNight ? 'night' : 'day');
+        
+        if (icon) {
+            icon.className = isNight ? 'wi wi-night-clear' : 'wi wi-day-sunny';
+        }
+    });
 }
 
 /**
@@ -193,7 +262,8 @@ function initApp() {
     document.getElementById('btn-return-home')?.addEventListener('click', () => {
         document.getElementById('view-results')?.classList.add('app-card--hidden');
         document.getElementById('view-search')?.classList.remove('app-card--hidden');
-        document.getElementById('view-root')?.classList.remove('night-mode');
+        
+        // Mantém o tema escolhido pelo usuário ao voltar para a home
         input.value = '';
     });
 }
@@ -242,10 +312,8 @@ function updateUI(data) {
     }
 
     const viewRoot = document.getElementById('view-root');
-    if (viewRoot) {
-        data.nightMode ? viewRoot.classList.add('night-mode') : viewRoot.classList.remove('night-mode');
-    }
-
+    const icon = document.getElementById('icon-theme');
+    
     document.getElementById('view-search')?.classList.add('app-card--hidden');
     document.getElementById('view-results')?.classList.remove('app-card--hidden');
 }
